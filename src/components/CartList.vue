@@ -28,7 +28,7 @@
     </td>
     <td>{{ cart.price * cart.count }}</td>
     <td>
-      <button @click="$emit('remove-item', cart.id)" class="btn btn-danger">Sepetten Çıkar</button>
+      <button @click="removeFromCart" class="btn btn-danger">Sepetten Çıkar</button>
     </td>
   </tr>
 </template>
@@ -45,16 +45,17 @@ export default {
     this.count = this.cart.count;
   },
   methods: {
+      removeFromCart() {
+        this.$store.dispatch("removeFromCart", this.cart.id);
+      },
       decrease() {
-          delete this.cart.count;
-          let changeItem = {...this.cart, count: --this.count};
-          this.$emit("decrease-count", changeItem);
+        let changedItem = {...this.cart, count: --this.count};
+        this.$store.dispatch("changeCount", changedItem);
       },
       increase() {
-          delete this.cart.count;
-          let changeItem = {...this.cart, count: ++this.count};
-          this.$emit("increase-count", changeItem);
-      },
+        let changedItem = {...this.cart, count: ++this.count};
+        this.$store.dispatch("changeCount", changedItem);
+      }
   },
 };
 </script>

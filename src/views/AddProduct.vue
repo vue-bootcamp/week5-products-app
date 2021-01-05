@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -51,16 +51,15 @@ export default {
         price: null,
         categoryId: "sec",
       },
-      categories: [],
     };
   },
   created() {
-    axios
-      .get("http://localhost:4000/categories")
-      .then((response) => {
-        this.categories = response.data;
-      })
-      .catch((err) => console.log(err));
+    this.$store.dispatch("initCategories");
+  },
+  computed: {
+    ...mapGetters({
+      categories: "getCategories",
+    }),
   },
   methods: {
     clearForm() {
@@ -73,13 +72,11 @@ export default {
       };
     },
     addProduct() {
-      axios
-        .post("http://localhost:4000/products", this.formData)
-        .then((response) => {
-          console.log(response.data);
+      this.$store.dispatch("addProduct", this.formData).then((status) => {
+        if(status === 201) {
           this.clearForm();
-        })
-        .catch((err) => console.log(err));
+        }
+      });
     },
   },
 };

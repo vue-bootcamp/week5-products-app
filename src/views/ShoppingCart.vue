@@ -16,9 +16,6 @@
           v-for="cart in carts"
           :key="cart.id"
           :cart="cart"
-          @decrease-count="decreaseCount"
-          @increase-count="increaseCount"
-          @remove-item="removeFromCart"
         />
       </tbody>
     </table>
@@ -26,56 +23,20 @@
 </template>
 
 <script>
-import axios from "axios";
 import CartList from "@/components/CartList";
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     cartList: CartList,
   },
-  data() {
-    return {
-      carts: [],
-    };
-  },
   created() {
-    axios
-      .get("http://localhost:4000/shopping-cart")
-      .then((response) => {
-        this.carts = response.data;
-      })
-      .catch((err) => console.log(err));
+    this.$store.dispatch("initShoppingCart");
   },
-  methods: {
-    decreaseCount(item) {
-      axios
-        .put(`http://localhost:4000/shopping-cart/${item.id}`, item)
-        .then((response) => {
-          console.log(response.data);
-          let index = this.carts.findIndex((cart) => cart.id === item.id);
-          this.carts[index] = item;
-        })
-        .catch((err) => console.log(err));
-    },
-    increaseCount(item) {
-      axios
-        .put(`http://localhost:4000/shopping-cart/${item.id}`, item)
-        .then((response) => {
-          console.log(response.data);
-          let index = this.carts.findIndex((cart) => cart.id === item.id);
-          this.carts[index] = item;
-        })
-        .catch((err) => console.log(err));
-    },
-    removeFromCart(id) {
-      axios
-        .delete(`http://localhost:4000/shopping-cart/${id}`)
-        .then((response) => {
-          console.log(response.data);
-          this.carts = this.carts.filter((cart) => cart.id !== id);
-        })
-        .catch((err) => console.log(err));
-    },
+  computed: {
+    ...mapGetters({
+      carts: "getShoppingCart",
+    }),
   },
 };
 </script>

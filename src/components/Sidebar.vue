@@ -23,22 +23,17 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapGetters } from "vuex";
 
 export default {
-  data() {
-    return {
-      categories: [],
-    };
-  },
   created() {
-    axios
-      .get("http://localhost:4000/categories")
-      .then((response) => {
-        this.categories = response.data;
-      })
-      .catch((err) => console.log(err));
+    this.$store.dispatch("initCategories");
   },
+  computed: {
+    ...mapGetters({
+      categories: "getCategories",
+    })
+  }
 };
 </script>
 

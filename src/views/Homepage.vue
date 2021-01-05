@@ -7,24 +7,20 @@
 </template>
 
 <script>
-import axios from "axios";
 import ProductCard from "@/components/ProductCard";
+import { mapGetters } from 'vuex';
 
 export default {
     components: {
         productCard : ProductCard
     },
-    data() {
-        return {
-            products: [],
-        }
-    },
     created() {
-        axios.get("http://localhost:4000/products")
-            .then(response => {
-                this.products = response.data;
-            })
-            .catch(err => console.log(err));
+        this.$store.dispatch("initProducts");
+    },
+    computed: {
+        ...mapGetters({
+            products: "getProducts",
+        }),
     },
 };
 </script>

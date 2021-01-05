@@ -11,39 +11,27 @@
 </template>
 
 <script>
-import axios from "axios";
 import ProductCard from "@/components/ProductCard";
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     productCard: ProductCard,
   },
-  data() {
-    return {
-      products: [],
-    };
-  },
   created() {
-    axios
-      .get(`http://localhost:4000/products?categoryId=${this.categoryId}`)
-      .then((response) => {
-        this.products = response.data;
-      })
-      .catch((err) => console.log(err));
+    this.$store.dispatch("initFilterProducts", this.categoryId);
   },
   computed: {
+    ...mapGetters({
+      products: "getProducts",
+    }),
     categoryId() {
       return this.$route.params.categoryId;
     },
   },
   watch: {
     categoryId() {
-      axios
-        .get(`http://localhost:4000/products?categoryId=${this.categoryId}`)
-        .then((response) => {
-          this.products = response.data;
-        })
-        .catch((err) => console.log(err));
+      this.$store.dispatch("initFilterProducts", this.categoryId);
     },
   },
 };

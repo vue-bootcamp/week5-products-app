@@ -36,48 +36,27 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapGetters } from 'vuex';
 
 export default {
   props: ["product"],
-  data() {
-    return {
-      carts: [],
-    };
-  },
   created() {
-    axios
-      .get("http://localhost:4000/shopping-cart")
-      .then((response) => {
-        this.carts = response.data;
-      })
-      .catch((err) => console.log(err));
+    this.$store.dispatch("initShoppingCart");
   },
   computed: {
+    ...mapGetters({
+      carts: "getShoppingCart",
+    }),
     isCart() {
       return Boolean(this.carts.find((item) => item.id === this.product.id));
     },
   },
   methods: {
     addToCart() {
-      axios
-        .post("http://localhost:4000/shopping-cart", {
-          ...this.product,
-          count: 1,
-        })
-        .then((response) => {
-          this.carts.push(response.data);
-        })
-        .catch((err) => console.log(err));
+      this.$store.dispatch("addToCart", {...this.product, count: 1});
     },
     removeFromCart() {
-      axios
-        .delete(`http://localhost:4000/shopping-cart/${this.product.id}`)
-        .then((response) => {
-          console.log(response);
-          this.carts = this.carts.filter((item) => item.id !== this.product.id);
-        })
-        .catch((err) => console.log(err));
+      this.$store.dispatch("removeFromCart", this.product.id);
     },
   },
 };
